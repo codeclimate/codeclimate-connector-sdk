@@ -9,7 +9,7 @@
     "clean": "rm -rf ./lib/",
     "prepublishOnly": "yarn clean && yarn build && yarn test",
     "postpublish": "git push && git push --tags",
-    "schema-md": "jsonschema2md -d ./schemas/ -e json -x - -o tmp"
+    "schema-md": "jsonschema2md -d ./schemas/ -x - -o docs/schemas/"
   },
   "files": [
     "bin/**/*",

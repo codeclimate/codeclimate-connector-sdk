@@ -4,16 +4,14 @@ describe(RecordProducerFacade, () => {
   describe("producing a record", () => {
     it("forwards a valid record to the wrapped producer", () => {
       const record = {
-        type: "Incident",
-        attributes: {
-          id: "a1b2c3",
-          self: "http://example.com/incident/42",
-          title: "an incident",
-          htmlUrl: "http://example.com",
-          number: 42,
-          status: "acknowledged",
-          createdAt: "2020-02-21 12:00:00Z"
-        }
+        _type: "Incident",
+        id: "a1b2c3",
+        self: "http://example.com/incident/42",
+        title: "an incident",
+        htmlUrl: "http://example.com",
+        number: 42,
+        status: "acknowledged",
+        createdAt: "2020-02-21 12:00:00Z"
       }
       const mockWriter = jest.fn()
       const producer = new RecordProducerFacade({ produce: mockWriter })
@@ -26,11 +24,9 @@ describe(RecordProducerFacade, () => {
 
     it("raises on invalid record", () => {
       const record = {
-        type: "Incident",
-        attributes: {
-          id: "a1b2c3",
-          title: "an incident",
-        }
+        _type: "Incident",
+        id: "a1b2c3",
+        title: "an incident",
       }
       const mockWriter = jest.fn()
       const producer = new RecordProducerFacade({ produce: mockWriter })

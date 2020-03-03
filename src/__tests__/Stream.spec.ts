@@ -3,12 +3,10 @@ import { Stream } from "../Stream"
 describe(Stream, () => {
   test("can be constructed from a valid Stream", () => {
     const stream = new Stream({
-      type: "Stream",
-      attributes: {
-        id: "a1b2",
-        self: "schema://id",
-        name: "foo"
-      }
+      _type: "Stream",
+      id: "a1b2",
+      self: "schema://id",
+      name: "foo"
     })
 
     expect(stream.id).toEqual("a1b2")
@@ -21,11 +19,11 @@ describe(Stream, () => {
     ).toThrow
 
     expect(
-      () => new Stream({ type: "Foo" })
+      () => new Stream({ _type: "Foo" })
     ).toThrow
 
     expect(
-      () => new Stream({ type: "Incident", attributes: { "id": "foo" } })
+      () => new Stream({ _type: "Incident", "id": "foo" })
     ).toThrow
   })
 })

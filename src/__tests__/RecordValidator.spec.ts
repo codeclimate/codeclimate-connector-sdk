@@ -4,32 +4,28 @@ describe(RecordValidator, () => {
   describe("Incident records", () => {
     test("is not valid with missing attrs", () => {
       const record = {
-        type: "Incident",
-        attributes: {
-          id: "a1b2c3",
-          self: "http://example.com",
-          title: "an incident"
-        }
+        _type: "Incident",
+        id: "a1b2c3",
+        self: "http://example.com",
+        title: "an incident"
       }
       const validator = new RecordValidator(record)
 
       expect(validator.isValid).toBe(false)
-      expect(validator.errors.length).toBeGreaterThan(2)
-      expect(validator.errors[0]).toMatch(/required attribute "htmlUrl"/)
+      expect(validator.errors.length).toBe(2)
+      expect(validator.errors[0]).toMatch(/required attribute "status"/)
     })
 
     test("is not valid with incorrectly formatted attrs", () => {
       const record = {
-        type: "Incident",
-        attributes: {
-          id: "a1b2c3",
-          self: "http://example.com/incident/42",
-          title: "an incident",
-          htmlUrl: "not-a-url",
-          number: 42,
-          status: "not-a-status",
-          createdAt: "not-a-time"
-        }
+        _type: "Incident",
+        id: "a1b2c3",
+        self: "http://example.com/incident/42",
+        title: "an incident",
+        htmlUrl: "not-a-url",
+        number: 42,
+        status: "not-a-status",
+        createdAt: "not-a-time"
       }
       const validator = new RecordValidator(record)
 
@@ -42,16 +38,14 @@ describe(RecordValidator, () => {
 
     test("is valid", () => {
       const record = {
-        type: "Incident",
-        attributes: {
-          id: "a1b2c3",
-          self: "http://example.com/incident/42",
-          title: "an incident",
-          htmlUrl: "http://example.com",
-          number: 42,
-          status: "acknowledged",
-          createdAt: "2020-02-21 12:00:00Z"
-        }
+        _type: "Incident",
+        id: "a1b2c3",
+        self: "http://example.com/incident/42",
+        title: "an incident",
+        htmlUrl: "http://example.com",
+        number: 42,
+        status: "acknowledged",
+        createdAt: "2020-02-21 12:00:00Z"
       }
       const validator = new RecordValidator(record)
 
@@ -62,10 +56,8 @@ describe(RecordValidator, () => {
   describe("Stream records", () => {
     test("is not valid without required keys", () => {
       const record = {
-        type: "Stream",
-        attributes: {
-          name: "your stream",
-        }
+        _type: "Stream",
+        name: "your stream",
       }
       const validator = new RecordValidator(record)
 
@@ -74,12 +66,10 @@ describe(RecordValidator, () => {
 
     test("is valid without optional keys", () => {
       const record = {
-        type: "Stream",
-        attributes: {
-          id: "a1b2c3",
-          self: "yourschema://some-id",
-          name: "your stream",
-        }
+        _type: "Stream",
+        id: "a1b2c3",
+        self: "yourschema://some-id",
+        name: "your stream",
       }
       const validator = new RecordValidator(record)
 
@@ -90,69 +80,56 @@ describe(RecordValidator, () => {
   describe("CoverageTotals records", () => {
     test("is valid with a repository URI", () => {
       const record = {
-        type: "CoverageTotals",
-        attributes: {
-          self: "http://example.com/test-coverage/123",
-          repository: "http://example.com/owner/repo",
-          commitOid: "a1b2c3",
-          coverage: 42,
-          filesCount: 123,
-          linesCount: 1230,
-          linesHitCount: 516,
-        }
+        _type: "CoverageTotals",
+        self: "http://example.com/test-coverage/123",
+        repository: "http://example.com/owner/repo",
+        commitOid: "a1b2c3",
+        coverage: 42,
+        filesCount: 123,
+        linesCount: 1230,
+        linesHitCount: 516,
       }
       const validator = new RecordValidator(record)
-
 
       expect(validator.isValid).toBe(true)
     })
 
     test("is valid with a nested repository record", () => {
       const record = {
-        type: "CoverageTotals",
-        attributes: {
-          self: "http://example.com/test-coverage/123",
-          repository: {
-            type: "Repository",
-            attributes: {
-              id: "123",
-              self: "http://example.com/owner/repo",
-              owner: {
-                id: "owner",
-                type: "organization",
-                name: "owner",
-              },
-              name: "repo"
-            }
+        _type: "CoverageTotals",
+        self: "http://example.com/test-coverage/123",
+        repository: {
+          _type: "Repository",
+          id: "123",
+          self: "http://example.com/owner/repo",
+          owner: {
+            id: "owner",
+            type: "organization",
+            name: "owner",
           },
-          commitOid: "a1b2c3",
-          coverage: 42,
-          filesCount: 123,
-          linesCount: 1230,
-          linesHitCount: 516,
-        }
+          name: "repo"
+        },
+        commitOid: "a1b2c3",
+        coverage: 42,
+        filesCount: 123,
+        linesCount: 1230,
+        linesHitCount: 516,
       }
       const validator = new RecordValidator(record)
 
       expect(validator.isValid).toBe(true)
     })
 
-    // Similar to early troubles I had with the top-level record `oneOf`,
-    // `oneOf` here is not validating as I expected it to. Marking this as skip
-    // for now to come back to and figure out so we don't allow invalid records.
-    // ~will
-    test.skip("is invalid with a invalid repository", () => {
+    test("is invalid with a invalid repository", () => {
       let record = {
-        type: "CoverageTotals",
-        attributes: {
-          self: "http://example.com/test-coverage/123",
-          repository: { foo: "bar" },
-          commitOid: "a1b2c3",
-          coverage: 42,
-          filesCount: 123,
-          linesCount: 1230,
-          linesHitCount: 516,
-        }
+        _type: "CoverageTotals",
+        self: "http://example.com/test-coverage/123",
+        repository: { foo: "bar" },
+        commitOid: "a1b2c3",
+        coverage: 42,
+        filesCount: 123,
+        linesCount: 1230,
+        linesHitCount: 516,
       }
 
       // validate an invalid sub-object
@@ -160,22 +137,22 @@ describe(RecordValidator, () => {
       expect(validator.isValid).toBe(false)
 
       // @ts-ignore: validate an invalid string val
-      record.attributes.repository = "foo"
+      record.repository = "foo"
       validator = new RecordValidator(record)
       expect(validator.isValid).toBe(false)
 
       // @ts-ignore: validate an invalid type
-      record.attributes.repository = 123
+      record.repository = 123
       validator = new RecordValidator(record)
       expect(validator.isValid).toBe(false)
 
       // @ts-ignore: validate an invalid null
-      record.attributes.repository = null
+      record.repository = null
       validator = new RecordValidator(record)
       expect(validator.isValid).toBe(false)
 
       // validate missing repository entirely
-      delete record.attributes.repository
+      delete record.repository
       validator = new RecordValidator(record)
       expect(validator.isValid).toBe(false)
     })
@@ -184,7 +161,7 @@ describe(RecordValidator, () => {
   describe("unknown record type", () => {
     test("is not valid", () => {
       const record = {
-        type: "Foo",
+        _type: "Foo",
         attributes: { }
       }
       const validator = new RecordValidator(record)
@@ -200,7 +177,7 @@ describe(RecordValidator, () => {
       const validator = new RecordValidator(record)
 
       expect(validator.isValid).toBe(false)
-      expect(validator.errors[0]).toMatch(/missing required attribute "type"/)
+      expect(validator.errors[0]).toMatch(/missing required attribute "_type"/)
     })
   })
 })

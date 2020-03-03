@@ -12,7 +12,9 @@ publish:
 
 .PHONY: compile_schema
 compile_schema:
-	yarn run ajv compile -s schemas/records.json
+	yarn run ajv compile \
+		-s schemas/**/*.schema.json \
+		-r schemas/**/*.schema.json
 
 .PHONY: test
 test:

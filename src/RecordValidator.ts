@@ -1,8 +1,8 @@
 import * as Ajv from "ajv";
 import { resolve } from "path";
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync } from "fs";
 
-const schemaPath = resolve(__dirname, "../schemas/records.json")
+const schemaDirPath = resolve(__dirname, "../schemas/")
 
 export class RecordValidator {
   private _ajv: Ajv.Ajv | null = null
@@ -21,10 +21,10 @@ export class RecordValidator {
     this.validate()
 
     if (!this.isValidType) {
-      if(!this.record["type"]) {
-        return ["missing required attribute \"type\""]
+      if(!this.record["_type"]) {
+        return ["missing required attribute \"_type\""]
       } else {
-        return [`"${this.record["type"]}" is not a recognized record type`]
+        return [`"${this.record["_type"]}" is not a recognized record type`]
       }
     }
 
@@ -51,30 +51,42 @@ export class RecordValidator {
     })
   }
 
+  private get schemaPaths(): string[] {
+    return readdirSync(schemaDirPath).filter((path) => {
+      return /\.schema\.json$/.test(path)
+    })
+  }
+
   private get ajv(): Ajv.Ajv {
     if (!this._ajv) {
       this._ajv = new Ajv({ allErrors: true })
-      this._ajv.addSchema(
-        JSON.parse(readFileSync(schemaPath).toString()),
-        "records",
-      )
+      this.schemaPaths.forEach((path) => {
+        this._ajv!.addSchema(JSON.parse(
+          readFileSync(
+            resolve(schemaDirPath, path)
+          ).toString()
+        ))
+      })
     }
 
     return this._ajv
   }
 
   // record types are FooBar, keys in the json schema defs are fooBar
-  private get recordTypeLowerCamel(): string {
-    const t = this.record["type"] || "MissingType"
-    return `${t[0].toLowerCase()}${t.slice(1)}`
+  private get recordTypeDasherize(): string {
+    const t = this.record["_type"] || "MissingType"
+    const initalDowned = `${t[0].toLowerCase()}${t.slice(1)}`
+    return initalDowned.replace(/([a-z])([A-Z])/, (_m, l, r) => {
+      return `${l}-${r.toLowerCase()}`
+    })
   }
 
   private get recordSchemaRef(): string {
-    return `records#/$definitions/${this.recordTypeLowerCamel}`
+    return `https://platform.codeclimate.com/schemas/${this.recordTypeDasherize}`
   }
 
   private get isValidType(): boolean {
-    if (!this.record["type"]) {
+    if (!this.record["_type"]) {
       return false
     }
 
