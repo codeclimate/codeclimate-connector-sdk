@@ -1,6 +1,6 @@
 {
   "name": "codeclimate-connector-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "SDK for developing connectors for the Code Climate Platform",
   "license": "AGPL-3.0-only",
   "scripts": {
