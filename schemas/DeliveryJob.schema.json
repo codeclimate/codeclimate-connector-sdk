@@ -31,7 +31,7 @@
     "state": {
       "description": "The state of the Build.",
       "type": "string",
-      "enum": ["created", "running", "errored", "complete"]
+      "enum": ["created", "running", "errored", "complete", "canceled"]
     },
     "htmlUrl": {
       "description": "The URL to view this Build.",
@@ -45,17 +45,17 @@
     },
     "updatedAt": {
       "description": "The time this build was last updated.",
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "finishedAt": {
       "description": "The time this build finished.",
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "deletedAt": {
       "description": "The time build was deleted.",
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     }
   },
