@@ -1,7 +1,12 @@
 import { RecordValidator } from "./RecordValidator"
 
+export interface RecordEnvelope {
+  extractedAt?: Date
+  record: object
+}
+
 export interface RecordProducer {
-  produce: (object) => void
+  produce: (RecordEnvelope) => void
 }
 
 export class InvalidRecordError extends Error {
@@ -26,13 +31,13 @@ export class RecordProducerFacade implements RecordProducer {
   constructor(public implementation: RecordProducer) {
   }
 
-  produce(record: object) {
-    const validator = new RecordValidator(record)
+  produce(envelope: RecordEnvelope) {
+    const validator = new RecordValidator(envelope.record)
 
     if (!validator.isValid) {
       throw new InvalidRecordError(validator.errors.join(", "))
     }
 
-    this.implementation.produce(record)
+    this.implementation.produce(envelope)
   }
 }

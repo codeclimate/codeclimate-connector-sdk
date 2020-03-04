@@ -25,7 +25,7 @@ export class FakeRecordProducerFacade extends RecordProducerFacade  {
 
   constructor() {
     super({
-      produce: (record) => this._records.push(record)
+      produce: (envelope) => this._records.push(envelope.record)
     })
   }
 

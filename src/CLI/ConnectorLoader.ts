@@ -25,8 +25,8 @@ export class ConnectorLoader {
   private buildRecordProducer(): RecordProducer {
     return new RecordProducerFacade(
       {
-        produce: (record) => {
-          this.logger.info(`Produced record: ${JSON.stringify(record, null, "  ")}`)
+        produce: (envelope) => {
+          this.logger.info(`Produced record: ${JSON.stringify(envelope.record, null, "  ")}`)
         }
       }
     )

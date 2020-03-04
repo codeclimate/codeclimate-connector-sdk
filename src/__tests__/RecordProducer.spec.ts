@@ -16,10 +16,10 @@ describe(RecordProducerFacade, () => {
       const mockWriter = jest.fn()
       const producer = new RecordProducerFacade({ produce: mockWriter })
 
-      producer.produce(record)
+      producer.produce({ record: record })
 
       expect(mockWriter.mock.calls.length).toBe(1)
-      expect(mockWriter.mock.calls[0][0]).toBe(record)
+      expect(mockWriter.mock.calls[0][0]).toEqual({ record: record })
     })
 
     it("raises on invalid record", () => {
@@ -32,7 +32,7 @@ describe(RecordProducerFacade, () => {
       const producer = new RecordProducerFacade({ produce: mockWriter })
 
       expect(
-        () => { producer.produce(record) }
+        () => { producer.produce({ record: record }) }
       ).toThrow(InvalidRecordError)
 
       expect(mockWriter.mock.calls.length).toBe(0)
